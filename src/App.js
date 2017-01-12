@@ -1,18 +1,56 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
+
+class Grille extends Component {
+  constructor() {
+    super();
+  }
+  render() {
+    return (
+      <canvas id="myCanvas" width="400" height="400">
+      </canvas>
+    );
+  }
+}
+
 class App extends Component {
+  constructor() {
+    super();
+
+    var cases=[];
+    for(var i=0;i<10;i++) {
+      cases[i] = [];
+      for(var j=0;j<10;j++)
+        cases[i][j] = {};
+    }
+    this.state = {
+      cases: cases
+    }
+  }
+  afficherBateau() {
+    /*if(bateauSelectionne) {
+      return <Bateau />
+    }*/
+  }
   render() {
     return (
       <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+        <form>
+          <div>
+            <input type="text" placeholder="joueur 1"/>
+            <button>Jouer</button>
+          </div>
+          <div>
+            <input type="text" placeholder="joueur 2"/>
+            <button>Jouer</button>
+          </div>
+        </form>
+        <div className="bateaux">
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <Grille type="radar"/>
+        <Grille type="flotte"/>
+        {this.afficherBateau()}
       </div>
     );
   }
