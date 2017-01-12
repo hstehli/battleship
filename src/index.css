@@ -13,3 +13,21 @@ canvas {
   background: grey;
   float: left;
 }
+.grille {
+  margin: 10px;
+}
+
+.caseMer{
+  fill: white;
+  stroke: black;
+}
+.caseBateau{
+    fill:grey;
+    stroke: grey;
+}
+/*
+.caseTouche{
+    fill: red;
+    stroke: red;
+}
+*/
