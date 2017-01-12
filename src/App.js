@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import Bateau from './Bateau.js';
 
 
 class Grille extends Component {
