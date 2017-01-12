@@ -13,3 +13,11 @@ canvas {
   background: grey;
   float: left;
 }
+.grille {
+  margin: 10px;
+}
+
+.case {
+  fill: white;
+  stroke: black;
+}

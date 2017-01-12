@@ -1,18 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-
-
-class Grille extends Component {
-  constructor() {
-    super();
-  }
-  render() {
-    return (
-      <canvas id="myCanvas" width="400" height="400">
-      </canvas>
-    );
-  }
-}
+import Grille from './Grille.js';
 
 class App extends Component {
   constructor() {
@@ -25,7 +13,10 @@ class App extends Component {
         cases[i][j] = {};
     }
     this.state = {
-      cases: cases
+      cases: cases,
+      bateau: {
+        x:5, y:5, orientation: "horizontale"
+      }
     }
   }
   afficherBateau() {
@@ -48,9 +39,10 @@ class App extends Component {
         </form>
         <div className="bateaux">
         </div>
+        <Grille type="flotte" {...this.state}>
+          {this.afficherBateau()}
+        </Grille>
         <Grille type="radar"/>
-        <Grille type="flotte"/>
-        {this.afficherBateau()}
       </div>
     );
   }
