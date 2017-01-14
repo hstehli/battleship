@@ -6,3 +6,5 @@ it('renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(<App />, div);
 });
+
+// NOTATION: N'oubliez pas d'écrire des tests !
