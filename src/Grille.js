@@ -1,16 +1,12 @@
 import React, { Component } from 'react';
 import Case from './Case.js'
 
-class Grille extends Component {
-  constructor() {
-    super();
-  }
-  render() {
+function Grille(props) {
     var rects=[]
     for(var i=0;i<10;i++) {
         rects[i] = [];
         for(var j=0;j<10;j++) {
-            rects[i][j] = <Case x={i} y={j} />;
+            rects[i][j] = <Case x={i} y={j} classe="caseMer" />;
         }
     }
     return (
@@ -19,7 +15,17 @@ class Grille extends Component {
         {this.props.children}
         </svg>
     );
+}
+
+class RadarGrille extends Component {
+  constructor() {
+    super();
+  }
+  render() {
+    return <Grille />;
   }
 }
+
+class 
 
 export default Grille;
