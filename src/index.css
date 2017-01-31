@@ -13,6 +13,7 @@ canvas {
   height:200px;
   background: grey;
   float: left;
+  padding: 5px;
 }
 .grille {
   margin: 10px;
@@ -32,3 +33,26 @@ canvas {
     stroke: red;
 }
 */
+.bateau{
+  background: chartreuse;
+}
+.bateau-2{
+    width: 80px;
+    height: 40px;
+}
+.bateau-3{
+    width: 120px;
+    height: 40px;
+}
+.bateau-4{
+    width: 160px;
+    height: 40px;
+}
+.bateau-5{
+    width: 200px;
+    height: 40px;
+}
+.selectionne{
+  stroke: lightblue;
+  fill: grey;
+}
