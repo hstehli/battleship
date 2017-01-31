@@ -12,20 +12,19 @@ function Grille(props) {
     return (
         <svg className="grille" height="400" width="400">
         {rects}
-        {this.props.children}
+        {props.children}
         </svg>
     );
 }
 
-class RadarGrille extends Component {
-  constructor() {
-    super();
-  }
+export class RadarGrille extends Component {
   render() {
-    return <Grille />;
+    return (<Grille {...this.props}/>);
   }
 }
 
-class 
-
-export default Grille;
+export class FlotteGrille extends Component {
+  render() {
+    return (<Grille {...this.props}/>);
+  }
+}

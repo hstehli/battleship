@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import Grille from './Grille.js';
+import { RadarGrille, FlotteGrille } from './Grille.js';
+
 
 class App extends Component {
   constructor() {
@@ -27,16 +28,18 @@ class App extends Component {
 	// sur une partie des fonctionnalités sans trop vous marcher sur les pieds.
     this.state = {
       cases: cases,
-      bateau: {
+      bateauPlace: false,
+      bateauCourant: {
         x:5, y:5, orientation: "horizontale"
       }
     }
   }
   afficherBateau() {
-    /*if(bateauSelectionne) {
+    /*if(bateauPlace) {
       return <Bateau />
     }*/
   }
+  // selectionner bateau(param) { setState({bateauCourant{x:5,y:5,longueur:param,orientation:"horizontale"})
   render() {
     return (
       <div className="App">
@@ -51,13 +54,15 @@ class App extends Component {
           </div>
         </form>
         <div className="bateaux">
+        {/* Afficher une div par bateau, avec style associé + onclick=selectionnerBateaux(2) */}
+          
         </div>
-		{/* NOTATION: Je pense qu'il serait plus pertinent de créer deux composants :
-			le premier FlotteGrille, et le deuxième RadarGrille, et que chacun des deux rende une Grille avec certaines données, mais comme ca chacun a une logique séparée (sur l'un, on place les bateaux, alors que sur l'autre on tire.*/}
-        <Grille type="flotte" {...this.state}>
+        {/* NOTATION: Je pense qu'il serait plus pertinent de créer deux composants :
+        le premier FlotteGrille, et le deuxième RadarGrille, et que chacun des deux rende une Grille avec certaines données, mais comme ca chacun a une logique séparée (sur l'un, on place les bateaux, alors que sur l'autre on tire.*/}
+        <FlotteGrille {...this.state}>
           {this.afficherBateau()}
-        </Grille>
-        <Grille type="radar"/>
+        </FlotteGrille>
+        <RadarGrille {...this.state}/>
       </div>
     );
   }
