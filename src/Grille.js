@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import Case from './Case.js'
+import App from './App.js'
 
 function Grille(props) {
     var rects=[]
     for(var i=0;i<10;i++) {
         rects[i] = [];
         for(var j=0;j<10;j++) {
-            rects[i][j] = <Case x={i} y={j} classe="caseMer" />;
+            rects[i][j] = <Case x={i} y={j} classe="caseMer"/>;
         }
     }
     return (

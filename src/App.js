@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Bateau from './Bateau.js';
+import Tir from './Tire.js';
 
 import { RadarGrille, FlotteGrille } from './Grille.js';
 
@@ -35,29 +36,60 @@ class App extends Component {
                      {longueur: 3, quantite: 2},
                      {longueur: 2, quantite: 2}
                     ],
-      bateauCourant: null
+      bateauCourant: null,
+      pionCourant : null,
+      bateauPlaces: [],
+      tirs: [{x:5, y:2, type:null}] /* type: touché, coulé, raté*/
     }
   }
-  afficherBateau() {
+  afficherBateauCourant() {
     if(this.state.bateauPlace) {
       return <Bateau {...this.state.bateauCourant} />
     }
   }
   
+  afficherBateauPlaces() {
+    var bateaux = [];
+    for(var i=0; i< this.state.bateauPlaces.length; i++ ){
+        bateaux[i] = <Bateau {...this.state.bateauPlaces[i]}/>;
+    }
+    return(
+      <g>{bateaux}</g>
+    );
+  }
+  
+  afficherTirs() {
+    var tirs = [];
+    for(var i=0; i< this.state.tirs.length; i++ ){
+        tirs[i] = <Tir {...this.state.tirs[i]}/>;
+    }
+    return(
+      <g>{tirs}</g>
+    )
+  
+  }
+  
+  tirer() {
+    //ajoute tire
+  }
 
-    selectionnerBateau(longueur){
+    selectionnerBateau(pion){
       
-      var bateauCourant = {x:5, y:5, orientation: "horizontale", longueur: longueur};
+      var bateauCourant = {x:5, y:5, orientation: "horizontale", longueur: pion.longueur};
         this.setState({
             bateauPlace : true,
-            bateauCourant: bateauCourant
+            bateauCourant: bateauCourant,
+            pionCourant: pion
         });
     }
   
     boiteABateaux() {
       var self = this;
       return this.state.pionsBateaux.map(function(pion, index) {
-        return (<div key={index} className={'bateau bateau-'+pion.longueur} onClick={()=>self.selectionnerBateau(pion.longueur)}>  <span>x{pion.quantite}</span> </div>);
+        if( pion.quantite === 0)
+          return null;
+        else
+          return (<div key={index} className={'bateau bateau-'+pion.longueur} onClick={()=>self.selectionnerBateau(pion)}>  <span>x{pion.quantite}</span> </div>);
       })
     }
     
@@ -93,7 +125,24 @@ class App extends Component {
             if(bateauCourant.x > 10 - bateauCourant.longueur)
                  bateauCourant.x = (10 - bateauCourant.longueur);
         }
+        /*-- ici ---*/
         this.setState({bateauCourant : bateauCourant})
+        
+        if(e.which == 13){ //placement ok
+          console.log('bateau placé');
+          this.setState({bateauPlace : false})
+          console.log(this.state.bateauPlaces);
+          
+          var bateauPlaces = this.state.bateauPlaces;
+          bateauPlaces.push(bateauCourant);
+          const pion = this.state.pionCourant;
+          this.setState({ bateauPlaces: bateauPlaces });
+          
+          if(pion.quantite > 0)
+            pion.quantite--;
+          this.setState({ pionCourant : pion });
+          
+        }
     }
     
   render() {
@@ -115,9 +164,12 @@ class App extends Component {
         {/* NOTATION: Je pense qu'il serait plus pertinent de créer deux composants :
         le premier FlotteGrille, et le deuxième RadarGrille, et que chacun des deux rende une Grille avec certaines données, mais comme ca chacun a une logique séparée (sur l'un, on place les bateaux, alors que sur l'autre on tire.*/}
         <FlotteGrille {...this.state}>
-          {this.afficherBateau()}
+                {this.afficherBateauCourant()}
+                {this.afficherBateauPlaces()}
         </FlotteGrille>
-        <RadarGrille {...this.state}/>
+        <RadarGrille {...this.state}>
+          {this.afficherTirs()}
+        </RadarGrille >
       </div>
     );
   }
