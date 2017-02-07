@@ -3,19 +3,14 @@ import './App.css';
 import Bateau from './Bateau.js';
 import Tir from './Tire.js';
 
+import { TypeCase } from './Case.js';
+
 import { RadarGrille, FlotteGrille } from './Grille.js';
 
 
 class App extends Component {
   constructor() {
     super();
-
-    var cases=[];
-    for(var i=0;i<10;i++) {
-      cases[i] = [];
-      for(var j=0;j<10;j++)
-        cases[i][j] = {};
-    }
 	// NOTATION: Je pense que par ici, il faudrait rajouter un état de jeu :
 	// NOTATION: par exemple,
 	// NOTATION: phase: "position-ships" || "player-me" || "player-opponent" || "finished"
@@ -29,72 +24,53 @@ class App extends Component {
 	// sur l'ensemble des données de votre modèle, comme ca vous pouvez chacun travailler
 	// sur une partie des fonctionnalités sans trop vous marcher sur les pieds.
     this.state = {
-      cases: cases,
-      bateauPlace: false,
-      pionsBateaux: [{longueur: 5, quantite: 1},
-                      {longueur: 4, quantite: 1},
-                     {longueur: 3, quantite: 2},
-                     {longueur: 2, quantite: 2}
-                    ],
+      enPlacement: false,
+      pionsBateaux: [5,4,3,3,2,2], // n = longueur bateau
       bateauCourant: null,
-      pionCourant : null,
-      bateauPlaces: [],
-      tirs: [{x:5, y:2, type:null}] /* type: touché, coulé, raté*/
+      casesFlotte: [],
+      casesRadar: []
     }
+    //// test
+    
+    /// 
   }
+
   afficherBateauCourant() {
-    if(this.state.bateauPlace) {
+    if(this.state.enPlacement) {
       return <Bateau {...this.state.bateauCourant} />
     }
-  }
-  
-  afficherBateauPlaces() {
-    var bateaux = [];
-    for(var i=0; i< this.state.bateauPlaces.length; i++ ){
-        bateaux[i] = <Bateau {...this.state.bateauPlaces[i]}/>;
-    }
-    return(
-      <g>{bateaux}</g>
-    );
-  }
-  
-  afficherTirs() {
-    var tirs = [];
-    for(var i=0; i< this.state.tirs.length; i++ ){
-        tirs[i] = <Tir {...this.state.tirs[i]}/>;
-    }
-    return(
-      <g>{tirs}</g>
-    )
-  
   }
   
   tirer() {
     //ajoute tire
   }
-
-    selectionnerBateau(pion){
-      
-      var bateauCourant = {x:5, y:5, orientation: "horizontale", longueur: pion.longueur};
+    selectionnerBateau(pion, id){
+      var bateauCourant = {x:5, y:5, orientation: "horizontale", longueur: pion, pionId:id };
         this.setState({
-            bateauPlace : true,
-            bateauCourant: bateauCourant,
-            pionCourant: pion
+            enPlacement : true,
+            bateauCourant: bateauCourant
         });
     }
   
     boiteABateaux() {
       var self = this;
       return this.state.pionsBateaux.map(function(pion, index) {
-        if( pion.quantite === 0)
-          return null;
-        else
-          return (<div key={index} className={'bateau bateau-'+pion.longueur} onClick={()=>self.selectionnerBateau(pion)}>  <span>x{pion.quantite}</span> </div>);
+          return (<div key={index} className={'bateau bateau-'+pion} onClick={()=>self.selectionnerBateau(pion,index)}>  <span>x0</span> </div>);
       })
     }
     
     
     componentDidMount() {
+      let casesFlotte=[], casesRadar=[];
+    for(let i=0;i<10;i++) {
+      casesFlotte[i]=[];
+      casesRadar[i]=[];
+      for(let j=0;j<10;j++) {
+        casesFlotte[i][j] = { type: TypeCase.MER };
+        casesRadar[i][j] = { type: TypeCase.MER };
+      }
+    }
+    this.setState({casesFlotte:casesFlotte, casesRadar:casesRadar});
         document.addEventListener('keyup', this.deplacements.bind(this))
     }
 
@@ -128,20 +104,19 @@ class App extends Component {
         /*-- ici ---*/
         this.setState({bateauCourant : bateauCourant})
         
-        if(e.which == 13){ //placement ok
-          console.log('bateau placé');
-          this.setState({bateauPlace : false})
-          console.log(this.state.bateauPlaces);
-          
-          var bateauPlaces = this.state.bateauPlaces;
-          bateauPlaces.push(bateauCourant);
-          const pion = this.state.pionCourant;
-          this.setState({ bateauPlaces: bateauPlaces });
-          
-          if(pion.quantite > 0)
-            pion.quantite--;
-          this.setState({ pionCourant : pion });
-          
+        if(e.which == 13) {
+          let pionsBateaux = this.state.pionsBateaux;
+          pionsBateaux.splice(bateauCourant.pionId, 1);
+
+          let casesFlotte = this.state.casesFlotte;
+          for(let i=0;i<bateauCourant.longueur;i++) {
+            if(bateauCourant.orientation === 'horizontale')
+              casesFlotte[bateauCourant.x+i][bateauCourant.y] = {type:TypeCase.BATEAU};
+            else
+              casesFlotte[bateauCourant.x][bateauCourant.y+i] = {type:TypeCase.BATEAU};
+          }
+
+          this.setState({enPlacement : false, casesFlotte:casesFlotte, pionsBateaux:pionsBateaux})
         }
     }
     
@@ -163,12 +138,10 @@ class App extends Component {
         </div>
         {/* NOTATION: Je pense qu'il serait plus pertinent de créer deux composants :
         le premier FlotteGrille, et le deuxième RadarGrille, et que chacun des deux rende une Grille avec certaines données, mais comme ca chacun a une logique séparée (sur l'un, on place les bateaux, alors que sur l'autre on tire.*/}
-        <FlotteGrille {...this.state}>
+        <FlotteGrille cases={this.state.casesFlotte}>
                 {this.afficherBateauCourant()}
-                {this.afficherBateauPlaces()}
         </FlotteGrille>
-        <RadarGrille {...this.state}>
-          {this.afficherTirs()}
+        <RadarGrille cases={this.state.casesRadar}>
         </RadarGrille >
       </div>
     );

@@ -2,18 +2,19 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  background-image: url('../public/img/wallpaper.jpg');
+  background-size:cover; 
 }
-
 canvas {
   border: 1px solid black;
 }
 
 .bateaux {
-  width:100px;
+  min-width:200px;
   height:200px;
-  background: grey;
+  background: #43575e;
   float: left;
-  padding: 5px;
+  padding: 10px;
 }
 .grille {
   margin: 10px;
@@ -27,14 +28,20 @@ canvas {
     fill:grey;
     stroke: grey;
 }
-/*
-.caseTouche{
+.caseRadar {
+    fill: lightseagreen;
+    stroke: black;
+}
+.pionTouche{
     fill: red;
     stroke: red;
 }
-*/
+.pionRate{
+    fill: white;
+    stroke: white;
+}
 .bateau{
-  background: chartreuse;
+  background: #ffe876;
 }
 .bateau-2{
     width: 80px;
@@ -53,6 +60,6 @@ canvas {
     height: 40px;
 }
 .selectionne{
-  stroke: lightblue;
-  fill: grey;
+  stroke: #43575e;
+  fill: #43575e;
 }

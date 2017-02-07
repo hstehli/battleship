@@ -29,7 +29,7 @@ io.on('connection', function(socket) {
             return true;
         })();
         
-        if(finished) {
+        if(!finished) {
             socket.broadcast.emit('receive missile',{
                 x:missile.x, y:missile.y
             });

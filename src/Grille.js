@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import Case from './Case.js'
 import App from './App.js'
 
+
 function Grille(props) {
-    var rects=[]
-    for(var i=0;i<10;i++) {
+    var rects=[];
+
+    for(var i=0;i<props.cases.length;i++) {
         rects[i] = [];
-        for(var j=0;j<10;j++) {
-            rects[i][j] = <Case x={i} y={j} classe="caseMer"/>;
+        for(var j=0;j<props.cases[i].length;j++) {
+            rects[i][j] = <Case x={i} y={j} {...props.cases[i][j]} noBg={props.noBg} />;
         }
     }
     return (
@@ -18,14 +20,16 @@ function Grille(props) {
     );
 }
 
-export class RadarGrille extends Component {
+export class FlotteGrille extends Component {
   render() {
-    return (<Grille {...this.props}/>);
+    return (<Grille {...this.props} noBg={false} />);
   }
 }
 
-export class FlotteGrille extends Component {
+export class RadarGrille extends Component {
   render() {
-    return (<Grille {...this.props}/>);
+    return (<Grille {...this.props} noBg={true}/>);
   }
 }
+
+
