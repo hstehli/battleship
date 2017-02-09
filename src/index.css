@@ -42,22 +42,20 @@ canvas {
 }
 .bateau{
   background: #ffe876;
+  height: 30px;
+  margin: .2em 0;
 }
 .bateau-2{
     width: 80px;
-    height: 40px;
 }
 .bateau-3{
     width: 120px;
-    height: 40px;
 }
 .bateau-4{
     width: 160px;
-    height: 40px;
 }
 .bateau-5{
     width: 200px;
-    height: 40px;
 }
 .selectionne{
   stroke: #43575e;
