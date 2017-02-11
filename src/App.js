@@ -7,24 +7,19 @@ import Bateau from './Bateau';
 import { TypeCase } from './Case';
 import { RadarGrille, FlotteGrille } from './Grille';
 
+// NOTATION: C'est pas mal, tout ce que vous avez réussi à faire finalement !
+// Attention cependant à ESLINT (vous avez 16 warnings quand on lance npm start)
 import ConnectionForm from './ConnectionForm';
 
+// NOTATION: Quand je joue, si j'arrive à toucher le bateau de l'ennemi, le jeu est bloqué
+// De ce que j'ai remarqué le problème est que this.state.phase est bloqué à "pending" dans ce cas
+// BUG#1
 
+// NOTATION: C'est un peu dommage qu'il y ait autant de code dans App, ca en devient assez dur à suivre.
+// Je pense que vous manquez de sous-composants
 class App extends Component {
   constructor() {
     super();
-    // NOTATION: Je pense que par ici, il faudrait rajouter un état de jeu :
-    // NOTATION: par exemple,
-    // NOTATION: phase: "position-ships" || "player-me" || "player-opponent" || "finished"
-    // NOTATION: Je pense qu'il faudra aussi stocker tous les coups joués, par exemple :
-    // plays: {
-    //	  me: [{x: 3, y:1, result: "miss"}, {x: 2, y:3, result: "hit"}],
-    //	  opponent: [{x: 6, y:2, result: "miss"}, {x: 4, y:7, result: "miss"}],
-    // }
-    // Et ce serait seulement ces données qui transiteraient sur le réseau.
-    // De manière générale, avant de coder, je vous conseille de vous mettre d'accord
-    // sur l'ensemble des données de votre modèle, comme ca vous pouvez chacun travailler
-    // sur une partie des fonctionnalités sans trop vous marcher sur les pieds.
     this.state = {
       enPlacement: false,
       pionsBateaux: [5,4,3,3,2,2], // n = longueur bateau
@@ -103,10 +98,11 @@ class App extends Component {
         bateauCourant: bateauCourant
     });
   }
-  
+
+  // NOTATION: Boite a Bateaux pourrait être un composant séparé
   boiteABateaux() {
     var self = this;
-    
+
     return this.state.pionsBateaux.map(function(pion, index) {
         return (<div key={index} className={'bateau bateau-'+pion} onClick={()=>self.selectionnerBateau(pion,index)}></div>);
     })
@@ -114,13 +110,16 @@ class App extends Component {
 
   deplacements(e) {
     var bateauCourant = this.state.bateauCourant;
-    if(e.which == 37 && bateauCourant.x > 0) { 
+// NOTATION: Je pense que des constantes
+// KEY_LEFT = 37, KEY_UP = 38, auraient étaient plus simple sans avoir à mettre de commentaire
+// Aussi, au lieu d'avoir un tas de else if, je préfère les return early
+    if(e.which == 37 && bateauCourant.x > 0) {
       bateauCourant.x--; //gauche
     }
-    else if(e.which == 38 && bateauCourant.y > 0 ) { 
+    else if(e.which == 38 && bateauCourant.y > 0 ) {
       bateauCourant.y--; //haut
     }
-    else if(e.which == 39){ 
+    else if(e.which == 39){
       if(bateauCourant.x<10-(bateauCourant.orientation == 'horizontale'?bateauCourant.longueur:1))
         bateauCourant.x++; //droite
     }
@@ -160,7 +159,7 @@ class App extends Component {
 
       this.setState({enPlacement : false, casesFlotte:casesFlotte, pionsBateaux:pionsBateaux})
     }
-    
+
     // On actualise la position du bateau dans le  state
     this.setState({bateauCourant:bateauCourant});
   }
@@ -175,7 +174,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <ConnectionForm 
+        <ConnectionForm
         me={this.state.joueurs.me} opponent={this.state.joueurs.opponent}
         updatePlayer={(prop,player)=>{
           let players = this.state.joueurs;
