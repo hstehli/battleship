@@ -5,7 +5,7 @@ var io = require('socket.io')(server);
 server.listen(3001,()=>{console.log('listen on port 3001')});
 
 class Player {
-    constructor(socket) {
+    constructor(socket, callbacks) {
         this.phase = "position-ships";
         this.socket = socket;
         this.name = "";
@@ -14,6 +14,7 @@ class Player {
         for(var i=0;i<10;i++)
             this.shotsGrid[i] = new Array(10);
         
+        this.callbacks = callbacks;
     }
     changePhase(newPhase) {
         this.phase = newPhase;
@@ -39,7 +40,7 @@ io.on('connection', function(socket) {
     }
 
     socket.on('new player', function(player) {
-        players[lastId] = new Player(socket);
+        players[lastId] = new Player(socket, {setMe:m=>{me=m}, setOpponent:o=>{opponent=o}});
         me = players[lastId];
         me.name = player.name;
 
@@ -50,16 +51,24 @@ io.on('connection', function(socket) {
 
         socket.emit('start me',{id:lastId});
         socket.broadcast.emit('start opponent', {name:me.name});
+
+        me.changePhase('position-ships');
+        if(lastId) {
+            opponent = players[0];
+            players[0].callbacks.setOpponent(me);
+        }
         lastId++;
     });
 
     socket.on('finish to set',function(grid) {
         me.shipsGrid = grid;
-        if(players.every(p=>p.shipsGrid)) {
+        console.log(me.name+" a finit de placé ses pion");
+        if(players[0] && players[1] && players[0].shipsGrid && players[1].shipsGrid) {
+            console.log("la parties commence");
             players[0].changePhase('player-me');
             players[1].changePhase('player-opponent');
         }
-        else
+        else if(opponent)
             opponent.socket.emit('finished to set');
     });
 
@@ -74,9 +83,16 @@ io.on('connection', function(socket) {
         })();
         
         if(!finished) {
+            let touche = opponent.shipsGrid[missile.x][missile.y].type == 1;
+            me.socket.emit('missile result',{x:missile.x, y:missile.y, touche:touche});
+            
             opponent.socket.emit('receive missile',{
                 x:missile.x, y:missile.y
             });
+            if(!touche) {
+                me.changePhase('player-opponent');
+                opponent.changePhase('player-me');
+            }
         }
         else {
             me.socket.emit('winner');
@@ -94,8 +110,10 @@ io.on('connection', function(socket) {
         if(players[1]) {
             players.shift();
             players.push(null);
+            players[0].callbacks.setMe(players[0]);
             lastId=1;
         }
+        else lastId=0;
     });
 });
 
