@@ -21,6 +21,7 @@ class Case extends Component {
     ellipse() {
         if(this.props.tire) {
             let className = (this.props.type == TypeCase.MER)? "pionRate" : "pionTouche";
+			// circle aurait marché aussi :-)
             return <ellipse rx="10" ry="10" cx={40*this.props.x+20} cy={40*this.props.y+20} className={className}/>;
         }
     }

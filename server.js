@@ -13,7 +13,7 @@ class Player {
         this.shotsGrid = new Array(10);
         for(var i=0;i<10;i++)
             this.shotsGrid[i] = new Array(10);
-        
+
         this.callbacks = callbacks;
     }
     changePhase(newPhase) {
@@ -30,7 +30,7 @@ io.on('connection', function(socket) {
         socket.emit('full');
         return;
     }
-    
+
     console.log(`Nouvelle connexion (id : ${lastId+1})`);
 
     var me, opponent = players[1-lastId];
@@ -40,6 +40,7 @@ io.on('connection', function(socket) {
     }
 
     socket.on('new player', function(player) {
+		// NOTATION: Ce code me parait un peu bizarre (avec les setMe et setOpponent)
         players[lastId] = new Player(socket, {setMe:m=>{me=m}, setOpponent:o=>{opponent=o}});
         me = players[lastId];
         me.name = player.name;
@@ -76,20 +77,27 @@ io.on('connection', function(socket) {
         me.shotsGrid[missile.x][missile.y] = true;
         let finished = (function() {
             for(var i=0;i<opponent.shipsGrid.length;i++)
-                for(var j=0;j<opponent.shipsGrid[i].length;j++) 
+                for(var j=0;j<opponent.shipsGrid[i].length;j++)
                     if((opponent.shipsGrid[i][j].type == 1) && !(me.shotsGrid[i][j]))
                         return false;
             return true;
         })();
-        
+
+// NOTATION: En inversant la condition et mettant un return, cela simplifie un peu le code.
         if(!finished) {
+// NOTATION: On peut utiliser const pour touche
             let touche = opponent.shipsGrid[missile.x][missile.y].type == 1;
             me.socket.emit('missile result',{x:missile.x, y:missile.y, touche:touche});
-            
+
             opponent.socket.emit('receive missile',{
                 x:missile.x, y:missile.y
             });
-            if(!touche) {
+            if(touche) {
+// NOTATION: J'ai trouvé l'origine du BUG#1, j'ai rajouté les deux lignes ci dessous.
+                me.changePhase('player-me');
+                opponent.changePhase('player-opponent');
+            }
+            else {
                 me.changePhase('player-opponent');
                 opponent.changePhase('player-me');
             }
@@ -108,6 +116,7 @@ io.on('connection', function(socket) {
             opponent.socket.emit('opponent disconnected');
         }
         if(players[1]) {
+// NOTATION: Les variables players me semblent un peu bizarres (pourquoi mets on un null dedans ??)
             players.shift();
             players.push(null);
             players[0].callbacks.setMe(players[0]);
