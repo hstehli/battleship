@@ -40,6 +40,7 @@ io.on('connection', function(socket) {
     }
 
     socket.on('new player', function(player) {
+		// NOTATION: Ce code me parait un peu bizarre (avec les setMe et setOpponent)
         players[lastId] = new Player(socket, {setMe:m=>{me=m}, setOpponent:o=>{opponent=o}});
         me = players[lastId];
         me.name = player.name;
@@ -82,14 +83,21 @@ io.on('connection', function(socket) {
             return true;
         })();
 
+// NOTATION: En inversant la condition et mettant un return, cela simplifie un peu le code.
         if(!finished) {
+// NOTATION: On peut utiliser const pour touche
             let touche = opponent.shipsGrid[missile.x][missile.y].type == 1;
             me.socket.emit('missile result',{x:missile.x, y:missile.y, touche:touche});
 
             opponent.socket.emit('receive missile',{
                 x:missile.x, y:missile.y
             });
-            if(!touche) {
+            if(touche) {
+// NOTATION: J'ai trouvé l'origine du BUG#1, j'ai rajouté les deux lignes ci dessous.
+                me.changePhase('player-me');
+                opponent.changePhase('player-opponent');
+            }
+            else {
                 me.changePhase('player-opponent');
                 opponent.changePhase('player-me');
             }
@@ -108,6 +116,7 @@ io.on('connection', function(socket) {
             opponent.socket.emit('opponent disconnected');
         }
         if(players[1]) {
+// NOTATION: Les variables players me semblent un peu bizarres (pourquoi mets on un null dedans ??)
             players.shift();
             players.push(null);
             players[0].callbacks.setMe(players[0]);
