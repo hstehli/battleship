@@ -52,7 +52,7 @@ class App extends Component {
     }
     this.setState({casesFlotte:casesFlotte, casesRadar:casesRadar});
 
-    let mask = (c) => c==32 || (c>=37 && c<=40);
+    let mask = (c) => c===32 || (c>=37 && c<=40);
     window.addEventListener('keydown', (e)=>{
       if(mask(e.which))
         e.preventDefault()
@@ -103,10 +103,10 @@ class App extends Component {
         bateauCourant: bateauCourant
     });
   }
-  
+
   boiteABateaux() {
     var self = this;
-    
+
     return this.state.pionsBateaux.map(function(pion, index) {
         return (<div key={index} className={'bateau bateau-'+pion} onClick={()=>self.selectionnerBateau(pion,index)}></div>);
     })
@@ -114,22 +114,27 @@ class App extends Component {
 
   deplacements(e) {
     var bateauCourant = this.state.bateauCourant;
-    if(e.which == 37 && bateauCourant.x > 0) { 
-      bateauCourant.x--; //gauche
+    // gauche
+    if(e.which === 37 && bateauCourant.x > 0) {
+      bateauCourant.x--;
     }
-    else if(e.which == 38 && bateauCourant.y > 0 ) { 
-      bateauCourant.y--; //haut
+    // haut
+    else if(e.which === 38 && bateauCourant.y > 0 ) {
+      bateauCourant.y--;
     }
-    else if(e.which == 39){ 
-      if(bateauCourant.x<10-(bateauCourant.orientation == 'horizontale'?bateauCourant.longueur:1))
-        bateauCourant.x++; //droite
+    // droite
+    else if(e.which === 39){
+      if(bateauCourant.x<10-(bateauCourant.orientation === 'horizontale'?bateauCourant.longueur:1))
+        bateauCourant.x++;
     }
-    else if(e.which == 40) { //bas
-      if(bateauCourant.y<10-(bateauCourant.orientation == 'verticale'?bateauCourant.longueur:1))
+    // bas
+    else if(e.which === 40) {
+      if(bateauCourant.y<10-(bateauCourant.orientation === 'verticale'?bateauCourant.longueur:1))
         bateauCourant.y++;
     }
-    else if(e.which == 32) { //espace
-      if(bateauCourant.orientation == 'horizontale'){
+    // espace
+    else if(e.which === 32) {
+      if(bateauCourant.orientation === 'horizontale'){
         bateauCourant.orientation = 'verticale';
         if(bateauCourant.y > 10 - bateauCourant.longueur)
           bateauCourant.y = (10 - bateauCourant.longueur);
@@ -141,7 +146,8 @@ class App extends Component {
         }
       }
     }
-    else if(e.which == 13 && this.state.bateauCourant) { // PRESS ENTER
+    // enter
+    else if(e.which === 13 && this.state.bateauCourant) {
       let casesFlotte = this.state.casesFlotte;
       let cur = bateauCourant;
 
@@ -153,14 +159,14 @@ class App extends Component {
       }
       let pionsBateaux = this.state.pionsBateaux;
       pionsBateaux.splice(bateauCourant.id, 1);
-      if(pionsBateaux.length == 0) {
+      if(pionsBateaux.length === 0) {
         this.props.socket.emit('finish to set', this.state.casesFlotte);
         this.setState({message: "En attente du placement de l'ennemi"});
       }
 
       this.setState({enPlacement : false, casesFlotte:casesFlotte, pionsBateaux:pionsBateaux})
     }
-    
+
     // On actualise la position du bateau dans le  state
     this.setState({bateauCourant:bateauCourant});
   }
@@ -175,7 +181,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <ConnectionForm 
+        <ConnectionForm
         me={this.state.joueurs.me} opponent={this.state.joueurs.opponent}
         updatePlayer={(prop,player)=>{
           let players = this.state.joueurs;

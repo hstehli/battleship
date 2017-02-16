@@ -8,3 +8,9 @@ it('renders without crashing', () => {
 });
 
 // NOTATION: N'oubliez pas d'écrire des tests !
+
+//test si il y a bien 5 bateaux
+// it('affiche 5 bateaux', () => {
+// 	const wrapper = mount(<App />);
+// 	expect(wrapper.find('line').length).toEqual(5);
+// });

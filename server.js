@@ -9,11 +9,11 @@ class Player {
         this.phase = "position-ships";
         this.socket = socket;
         this.name = "";
-        //this.shipsGrid = [];
+        // this.shipsGrid = [];
         this.shotsGrid = new Array(10);
         for(var i=0;i<10;i++)
             this.shotsGrid[i] = new Array(10);
-        
+
         this.callbacks = callbacks;
     }
     changePhase(newPhase) {
@@ -30,7 +30,7 @@ io.on('connection', function(socket) {
         socket.emit('full');
         return;
     }
-    
+
     console.log(`Nouvelle connexion (id : ${lastId+1})`);
 
     var me, opponent = players[1-lastId];
@@ -76,16 +76,16 @@ io.on('connection', function(socket) {
         me.shotsGrid[missile.x][missile.y] = true;
         let finished = (function() {
             for(var i=0;i<opponent.shipsGrid.length;i++)
-                for(var j=0;j<opponent.shipsGrid[i].length;j++) 
+                for(var j=0;j<opponent.shipsGrid[i].length;j++)
                     if((opponent.shipsGrid[i][j].type == 1) && !(me.shotsGrid[i][j]))
                         return false;
             return true;
         })();
-        
+
         if(!finished) {
             let touche = opponent.shipsGrid[missile.x][missile.y].type == 1;
             me.socket.emit('missile result',{x:missile.x, y:missile.y, touche:touche});
-            
+
             opponent.socket.emit('receive missile',{
                 x:missile.x, y:missile.y
             });
@@ -116,4 +116,3 @@ io.on('connection', function(socket) {
         else lastId=0;
     });
 });
-
