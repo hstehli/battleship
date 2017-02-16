@@ -99,10 +99,7 @@ class App extends Component {
     });
   }
 
-<<<<<<< HEAD
-=======
   // NOTATION: Boite a Bateaux pourrait être un composant séparé
->>>>>>> 6a4e7f8d01c24c10c89cf847112d6ae0e0e4ba5c
   boiteABateaux() {
     var self = this;
 
